@@ -11,6 +11,6 @@ URL: bitbucket.org:ppati000/simpleclient.git
 Bei Authentication auf Private/Public key gehen und den private key (ohne .pub) auswählen
 Fertig!
 
-### Und wenn ich nur die KI ausprobieren möchte=
+### Und wenn ich nur die KI ausprobieren möchte? ###
 
 SimpleClient/dist/patrick_player.zip runterladen :D
