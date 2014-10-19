@@ -2,6 +2,7 @@ package sc.player2015.logic;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -57,8 +58,16 @@ public class RandomLogic implements IGameHandler {
 	}
         
         /**
+         * Checks whether coordinates are valid
+         * @param coords int array with two coordinates, x: coords[0]; y: coords[1]
+         * @return true if valid, false if not
+         */
+        private boolean validCoords(int [] coords){
+            return !(coords[0] < 0 || coords[1] < 0 || coords[1] > 7 || (coords[1] % 2 == 0 && coords[0] > 6) || (coords[1] % 2 == 1 && coords[0] > 7));
+        }
+        
+        /**
          * Returns the coordinates of all surrounding fields to a specific field.
-         * NOTE: THIS DOES NOT WORK WITH FIELDS ON THE EDGE OF THE BOARD AS OF NOW (will probably crash)
          * @param fieldCoords the coordinates of the field, with fieldCoords[0] 
          * being the x- and fieldCoords[1] being the y-coordinate
          * @return an ArrayList of arrays containing the surrounding field's coordinates, with
@@ -66,7 +75,7 @@ public class RandomLogic implements IGameHandler {
          */
         private ArrayList<int[]> getSurroundingCoordinates(int[] fieldCoords){
             //We use this ArrayList to store Arrays of coordinates.
-            ArrayList<int[]> surroundingCoords = new ArrayList();
+            ArrayList<int[]> surroundingCoords = new ArrayList<>();
             
             //the coordinates of the two surrounding fields in the same row
             surroundingCoords.add(new int[]{fieldCoords[0] - 1, fieldCoords[1]});
@@ -99,6 +108,15 @@ public class RandomLogic implements IGameHandler {
             //lower left field
             surroundingCoords.add(new int[]{rightmostXCoord - 1, fieldCoords[1] - 1});
             
+            for (Iterator<int[]> it = surroundingCoords.iterator(); it.hasNext();) {
+                int[] surroundingCoord = it.next();
+                if (!validCoords(surroundingCoord)){
+                    it.remove();
+                }
+            }
+            
+            System.out.println("*** SURROUNDING COORDS: " + surroundingCoords.toArray().toString());
+            
             return surroundingCoords;
         }
 
@@ -115,46 +133,38 @@ public class RandomLogic implements IGameHandler {
                         //initialize selection so the compiler doesn't complain
                         SetMove selection = possibleMoves.get(0);
                         
-                        for (SetMove possibleMove : possibleMoves){
-                            
-                            int[] coordinates = possibleMove.getSetCoordinates();
-                            
+                    for (SetMove possibleMove : possibleMoves) {
+
+                        int[] coordinates = possibleMove.getSetCoordinates();
+
                             //only take fields that are not on the edge of the board
-                            if (coordinates[1] != 0 && coordinates[1] != 7 && coordinates[0] != 0 
-                                    && !(coordinates[1] % 2 == 0 && coordinates[0] == 6) 
-                                    && !(coordinates[1] % 2 != 0 && coordinates[0] == 7)){
-                                
-                                //now count the fish surrounding the field
-                                ArrayList<int[]> surroundingCoords = getSurroundingCoordinates(coordinates);
-                                int surroundingFishCount = 0;
-                                boolean friendlyPenguinOnField = false;
-                                for (int i = 0; i < surroundingCoords.size(); i++){
-                                    Field surroundingField = gameState.getBoard().getField(surroundingCoords.get(i)[0], surroundingCoords.get(i)[1]);
-                                    if (surroundingField.hasPenguin() && surroundingField.getPenguin().getOwner() == currentPlayer.getPlayerColor()){
-                                        friendlyPenguinOnField = true;
-                                    }
-                                    surroundingFishCount += surroundingField.getFish();
-                                }
-                                
-                                /*if this is the highest number of fish surrounding a field as of now,
-                                update the max fish count and the selected move*/
-                                if (surroundingFishCount > maxSurroundingFishCount && !friendlyPenguinOnField){
-                                    maxSurroundingFishCount = surroundingFishCount;
-                                    selection = possibleMove;
-                                }
-                            
+                        //now count the fish surrounding the field
+                        ArrayList<int[]> surroundingCoords = getSurroundingCoordinates(coordinates);
+                        int surroundingFishCount = 0;
+                        boolean friendlyPenguinOnField = false;
+                        for (int i = 0; i < surroundingCoords.size(); i++) {
+                            Field surroundingField = gameState.getBoard().getField(surroundingCoords.get(i)[0], surroundingCoords.get(i)[1]);
+                            if (surroundingField.hasPenguin() && surroundingField.getPenguin().getOwner() == currentPlayer.getPlayerColor()) {
+                                friendlyPenguinOnField = true;
                             }
-                            
+                            surroundingFishCount += surroundingField.getFish();
                         }
-                        
-                        
-                        
-			System.out.println("*** sende zug: SET ");
-                        
-			System.out.println("*** setze Pinguin auf x="
-					+ selection.getSetCoordinates()[0] + ", y="
-					+ selection.getSetCoordinates()[1]);
-			sendAction(selection);
+
+                        /*if this is the highest number of fish surrounding a field as of now,
+                         update the max fish count and the selected move*/
+                        if (surroundingFishCount > maxSurroundingFishCount && !friendlyPenguinOnField) {
+                            maxSurroundingFishCount = surroundingFishCount;
+                            selection = possibleMove;
+                        }
+
+                    }
+
+                    System.out.println("*** sende zug: SET ");
+
+                    System.out.println("*** setze Pinguin auf x="
+                            + selection.getSetCoordinates()[0] + ", y="
+                            + selection.getSetCoordinates()[1]);
+                    sendAction(selection);
 		} else {
 			List<Move> possibleMoves = gameState.getPossibleMoves();
 			System.out.println("*** sende zug: RUN ");
