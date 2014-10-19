@@ -1,6 +1,7 @@
 package sc.player2015.logic;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -58,54 +59,47 @@ public class RandomLogic implements IGameHandler {
         /**
          * Returns the coordinates of all surrounding fields to a specific field.
          * NOTE: THIS DOES NOT WORK WITH FIELDS ON THE EDGE OF THE BOARD AS OF NOW (will probably crash)
-         * @param fieldCoordinates the coordinates of the field, with fieldCoordinates[0] 
-         * being the x- and fieldCoordinates[1] being the y-coordinate
-         * @return a 2D array with the surrounding field's coordinates, with
-         * [x][0] being the x-, and [x][1] being the y-coordinate of a field
+         * @param fieldCoords the coordinates of the field, with fieldCoords[0] 
+         * being the x- and fieldCoords[1] being the y-coordinate
+         * @return an ArrayList of arrays containing the surrounding field's coordinates, with
+         * [0] being the x-, and [1] being the y-coordinate of a field
          */
-        private int[][] getSurroundingCoordinates(int[] fieldCoordinates){
-            //6 surrounding fields and 2 coordinates for each, so:
-            int[][] surroundingCoordinates = new int [6][2];
+        private ArrayList<int[]> getSurroundingCoordinates(int[] fieldCoords){
+            //We use this ArrayList to store Arrays of coordinates.
+            ArrayList<int[]> surroundingCoords = new ArrayList();
             
             //the coordinates of the two surrounding fields in the same row
-            surroundingCoordinates[0][0] = fieldCoordinates[0]-1;
-            surroundingCoordinates[0][1] = fieldCoordinates[1];
-            
-            surroundingCoordinates[1][0] = fieldCoordinates[0]+1;
-            surroundingCoordinates[1][1] = fieldCoordinates[1];
+            surroundingCoords.add(new int[]{fieldCoords[0] - 1, fieldCoords[1]});
+            surroundingCoords.add(new int[]{fieldCoords[0] + 1, fieldCoords[1]});
             
             /**
-             * Here we calculate the highest x coordinate for the surrounding fields
+             * Here we calculate the rightmost x coordinate for the surrounding fields
              * in the rows above and below our field. If our field is in a long row
              * this number is the same as the x coordinate of our field. If it's
              * in a short row, we have to add 1 to that number.
              */
-            int highestXCoordinate;
-            if (fieldCoordinates[1] % 2 == 0){
-                highestXCoordinate = fieldCoordinates[0]+1;
+            int rightmostXCoord;
+            if (fieldCoords[1] % 2 == 0){
+                rightmostXCoord = fieldCoords[0]+1;
             }
             else {
-                highestXCoordinate = fieldCoordinates[0];
+                rightmostXCoord = fieldCoords[0];
             }
             
             //Now we can calculate the coordinates of the surrounding fields in the rows above and below
             //upper right field
-            surroundingCoordinates[2][0] = highestXCoordinate;
-            surroundingCoordinates[2][1] = fieldCoordinates[1] + 1;
+            surroundingCoords.add(new int[]{rightmostXCoord, fieldCoords[1] + 1});
             
             //lower right field
-            surroundingCoordinates[3][0] = highestXCoordinate;
-            surroundingCoordinates[3][1] = fieldCoordinates[1]-1;
+            surroundingCoords.add(new int[]{rightmostXCoord, fieldCoords[1] - 1});
             
             //upper left field
-            surroundingCoordinates[4][0] = highestXCoordinate - 1;
-            surroundingCoordinates[4][1] = fieldCoordinates[1] + 1;
+            surroundingCoords.add(new int[]{rightmostXCoord - 1, fieldCoords[1] + 1});
             
             //lower left field
-            surroundingCoordinates[5][0] = highestXCoordinate - 1;
-            surroundingCoordinates[5][1] = fieldCoordinates[1] - 1;
+            surroundingCoords.add(new int[]{rightmostXCoord - 1, fieldCoords[1] - 1});
             
-            return surroundingCoordinates;
+            return surroundingCoords;
         }
 
 	/**
@@ -131,11 +125,11 @@ public class RandomLogic implements IGameHandler {
                                     && !(coordinates[1] % 2 != 0 && coordinates[0] == 7)){
                                 
                                 //now count the fish surrounding the field
-                                int[][] surroundingCoordinates = getSurroundingCoordinates(coordinates);
+                                ArrayList<int[]> surroundingCoords = getSurroundingCoordinates(coordinates);
                                 int surroundingFishCount = 0;
                                 boolean friendlyPenguinOnField = false;
-                                for (int i = 0; i < 5; i++){
-                                    Field surroundingField = gameState.getBoard().getField(surroundingCoordinates[i][0], surroundingCoordinates[i][1]);
+                                for (int i = 0; i < surroundingCoords.size(); i++){
+                                    Field surroundingField = gameState.getBoard().getField(surroundingCoords.get(i)[0], surroundingCoords.get(i)[1]);
                                     if (surroundingField.hasPenguin() && surroundingField.getPenguin().getOwner() == currentPlayer.getPlayerColor()){
                                         friendlyPenguinOnField = true;
                                     }
