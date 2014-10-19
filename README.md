@@ -23,4 +23,4 @@ git checkout -b neues-feature master
 
 ### Und wenn ich nur die KI ausprobieren möchte? ###
 
-SimpleClient/dist/patrick_player.zip runterladen :D
+[https://bitbucket.org/ppati000/simpleclient/downloads/patrick_player.zip]
