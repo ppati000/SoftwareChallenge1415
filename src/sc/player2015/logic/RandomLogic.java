@@ -18,6 +18,7 @@ import sc.plugin2015.Player;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.SetMove;
 import sc.shared.GameResult;
+import static tk.ppati000.logging.Logging.logger;
 
 /**
  * Das Herz des Simpleclients: Eine sehr simple Logik, die ihre Zuege zufaellig
@@ -104,18 +105,13 @@ public class RandomLogic implements IGameHandler {
                             + selection.getSetCoordinates()[1]);
                     sendAction(selection);
 		} else {
-			List<Move> possibleMoves = gameState.getPossibleMoves();
-			System.out.println("*** sende zug: RUN ");
-			Move selection = possibleMoves.get(rand.nextInt(possibleMoves
-					.size()));
-			if (selection.getClass() == NullMove.class)
-				System.out.println("*** Ich setze aus.");
-			else {
-				RunMove runSelection = (RunMove) selection;
-				System.out.println("*** bewege Pinguin von x="
-						+ runSelection.fromX + ", y=" + runSelection.fromY
-						+ " auf x=" + runSelection.toX + ", y=" + runSelection.toY);
-			}
+			MoveRanking ranking = new MoveRanking(gameState);
+                        Move selection = ranking.getBestMove();
+                        
+			if (selection == null){
+                            logger.info("*** No RunMoves left. Performing NullMove");
+                        }
+                        
 			sendAction(selection);
 		}
 	}
