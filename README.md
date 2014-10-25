@@ -28,12 +28,12 @@ Was machen Sachen und wie geht das
 8. Bevor wir etwas neues in den Code einbauen, **wechseln wir zu einer neuen Branch**: `git checkout -b irgendein-neues-feature` (in Git Bash eingeben)
 9. Jetzt kannst du loslegen mit coden :D
 10. Wenn du irgendwas fertig hast, dann musst du einen *commit* machen, d.h. die Änderungen in deiner lokalen Repo festhalten:
-  - z.B.`git commit -a -m "Update RandomLogic to kill all enemy players to win the game"`
+    - z.B.`git commit -a -m "Update RandomLogic to kill all enemy players to win the game"`
 11. Nun sind die Änderungen am Code auf der Repo auf Deinem PC gespeichert. Damit sie auf BitBucket landen, musst du sie noch einen *push* machen: 
-  - `git push`
+    - `git push`
 12. Nun sind die Änderungen in BitBucket auf der Branch irgendein-neues-feature. Wenn du meinst, der Code ist jetzt gut genug, um in die Haupt-Branch ("Master") eingebracht zu werden, erstelle ein *Pull Request* in BitBucket:
-  - Auf **Pull Requests** gehen
-  - Links deine Branch, rechts Master auswählen
+    - Auf **Pull Requests** gehen
+    - Links deine Branch, rechts Master auswählen
 13. jetzt können ich (und Lennart falls der mal kommt) den Code anschauen, testen und dann kommt er in die *master* Branch ^_^
 
 Also nochmal der Workflow beim Coden zusammengefasst
