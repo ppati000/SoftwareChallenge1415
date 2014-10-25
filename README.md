@@ -1,5 +1,7 @@
 # README #
 
+Alle News und Diskusionen auf Hipchat: https://ppati000.hipchat.com/invite/189128/38fb4d458cbdb0e88838f20b2e1c4521
+
 SimpleClient
 
 Was machen Sachen und wie geht das
