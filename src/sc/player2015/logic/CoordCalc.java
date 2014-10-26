@@ -25,6 +25,19 @@ public class CoordCalc {
     public static boolean validCoords(int[] coords) {
         return !(coords[0] < 0 || coords[1] < 0 || coords[1] > 7 || (coords[1] % 2 == 0 && coords[0] > 6) || (coords[1] % 2 == 1 && coords[0] > 7));
     }
+    
+    /**
+     * Calculate the distance between two fields.
+     * @param coords an array containing the coordinates.
+     * coords[0]: x coordinate of point 1
+     * coords[1]: y coordinate of point 1
+     * coords[2]: x coordinate of point 2
+     * coords[3]: y coordinate of point 2
+     * @return the distance as double
+     */
+    public static double distance(int coords[]){
+        return Math.sqrt(Math.pow((double)coords[0]-(double)coords[2], 2)+(Math.pow((double)coords[1]-(double)coords[3], 2)));
+    }
 
     /**
      * Returns the coordinates of all surrounding fields to a specific field.
