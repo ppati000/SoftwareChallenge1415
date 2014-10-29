@@ -18,6 +18,7 @@ import sc.plugin2015.Player;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.SetMove;
 import sc.shared.GameResult;
+import static tk.ppati000.logging.Logging.logger;
 
 /**
  * Das Herz des Simpleclients: Eine sehr simple Logik, die ihre Zuege zufaellig
@@ -57,68 +58,6 @@ public class RandomLogic implements IGameHandler {
 		System.out.println("*** Das Spiel ist beendet");
 	}
         
-        /**
-         * Checks whether coordinates are valid
-         * @param coords int array with two coordinates, x: coords[0]; y: coords[1]
-         * @return true if valid, false if not
-         */
-        private boolean validCoords(int [] coords){
-            return !(coords[0] < 0 || coords[1] < 0 || coords[1] > 7 || (coords[1] % 2 == 0 && coords[0] > 6) || (coords[1] % 2 == 1 && coords[0] > 7));
-        }
-        
-        /**
-         * Returns the coordinates of all surrounding fields to a specific field.
-         * @param fieldCoords the coordinates of the field, with fieldCoords[0] 
-         * being the x- and fieldCoords[1] being the y-coordinate
-         * @return an ArrayList of arrays containing the surrounding field's coordinates, with
-         * [0] being the x-, and [1] being the y-coordinate of a field
-         */
-        private ArrayList<int[]> getSurroundingCoordinates(int[] fieldCoords){
-            //We use this ArrayList to store Arrays of coordinates.
-            ArrayList<int[]> surroundingCoords = new ArrayList<>();
-            
-            //the coordinates of the two surrounding fields in the same row
-            surroundingCoords.add(new int[]{fieldCoords[0] - 1, fieldCoords[1]});
-            surroundingCoords.add(new int[]{fieldCoords[0] + 1, fieldCoords[1]});
-            
-            /**
-             * Here we calculate the rightmost x coordinate for the surrounding fields
-             * in the rows above and below our field. If our field is in a long row
-             * this number is the same as the x coordinate of our field. If it's
-             * in a short row, we have to add 1 to that number.
-             */
-            int rightmostXCoord;
-            if (fieldCoords[1] % 2 == 0){
-                rightmostXCoord = fieldCoords[0]+1;
-            }
-            else {
-                rightmostXCoord = fieldCoords[0];
-            }
-            
-            //Now we can calculate the coordinates of the surrounding fields in the rows above and below
-            //upper right field
-            surroundingCoords.add(new int[]{rightmostXCoord, fieldCoords[1] + 1});
-            
-            //lower right field
-            surroundingCoords.add(new int[]{rightmostXCoord, fieldCoords[1] - 1});
-            
-            //upper left field
-            surroundingCoords.add(new int[]{rightmostXCoord - 1, fieldCoords[1] + 1});
-            
-            //lower left field
-            surroundingCoords.add(new int[]{rightmostXCoord - 1, fieldCoords[1] - 1});
-            
-            for (Iterator<int[]> it = surroundingCoords.iterator(); it.hasNext();) {
-                int[] surroundingCoord = it.next();
-                if (!validCoords(surroundingCoord)){
-                    it.remove();
-                }
-            }
-            
-            System.out.println("*** SURROUNDING COORDS: " + surroundingCoords.toArray().toString());
-            
-            return surroundingCoords;
-        }
 
 	/**
 	 * {@inheritDoc}
@@ -139,7 +78,7 @@ public class RandomLogic implements IGameHandler {
 
                             //only take fields that are not on the edge of the board
                         //now count the fish surrounding the field
-                        ArrayList<int[]> surroundingCoords = getSurroundingCoordinates(coordinates);
+                        ArrayList<int[]> surroundingCoords = CoordCalc.getSurroundingCoordinates(coordinates);
                         int surroundingFishCount = 0;
                         boolean friendlyPenguinOnField = false;
                         for (int i = 0; i < surroundingCoords.size(); i++) {
@@ -166,18 +105,13 @@ public class RandomLogic implements IGameHandler {
                             + selection.getSetCoordinates()[1]);
                     sendAction(selection);
 		} else {
-			List<Move> possibleMoves = gameState.getPossibleMoves();
-			System.out.println("*** sende zug: RUN ");
-			Move selection = possibleMoves.get(rand.nextInt(possibleMoves
-					.size()));
-			if (selection.getClass() == NullMove.class)
-				System.out.println("*** Ich setze aus.");
-			else {
-				RunMove runSelection = (RunMove) selection;
-				System.out.println("*** bewege Pinguin von x="
-						+ runSelection.fromX + ", y=" + runSelection.fromY
-						+ " auf x=" + runSelection.toX + ", y=" + runSelection.toY);
-			}
+			MoveRanking ranking = new MoveRanking(gameState);
+                        Move selection = ranking.getBestMove();
+                        
+			if (selection == null){
+                            logger.info("*** No RunMoves left. Performing NullMove");
+                        }
+                        
 			sendAction(selection);
 		}
 	}
