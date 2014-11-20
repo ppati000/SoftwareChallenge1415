@@ -1,6 +1,6 @@
 package sc.player2015;
 
-import sc.player2015.logic.RandomLogic;
+import sc.player2015.logic.PlayerLogic;
 import sc.plugin2015.AbstractClient;
 import sc.plugin2015.IGameHandler;
 
@@ -13,11 +13,11 @@ import sc.plugin2015.IGameHandler;
 public enum LogicFactory {
 	// Verfügbare Taktiken (Implementierungen des IGameHandler) müssen hier
 	// eingetragen wie im Beispiel eingetragen und ihre Klasse angegeben werden
-	RANDOM(RandomLogic.class),
+	RANDOM(PlayerLogic.class),
 
 	// Die Logik die gewählt wird, wenn kein passender Eintrag zu der Eingabe
 	// gefunden wurde:
-	DEFAULT(RandomLogic.class);
+	DEFAULT(PlayerLogic.class);
 
 	private Class<? extends IGameHandler> logic;
 

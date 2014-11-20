@@ -25,26 +25,18 @@ import static tk.ppati000.logging.Logging.logger;
  * waehlt, aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
  * Konsolenausgaben gemacht.
  */
-public class RandomLogic implements IGameHandler {
+public class PlayerLogic implements IGameHandler {
 
 	private Starter client;
 	private GameState gameState;
 	private Player currentPlayer;
 
-	/*
-	 * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
-	 * einmalig erzeugt wird und darn immer zur Verfuegung steht.
-	 */
-	private static final Random rand = new SecureRandom();
-
 	/**
-	 * Erzeugt ein neues Strategieobjekt, das zufaellige Zuege taetigt.
-	 * 
-	 * @param client
-	 *            Der Zugrundeliegende Client der mit dem Spielserver
-	 *            kommunizieren kann.
+	 * Creates a PlayerLogic object.	 * 
+	 * @param client Der Zugrundeliegende Client der mit dem Spielserver 
+         * kommunizieren kann.
 	 */
-	public RandomLogic(Starter client) {
+	public PlayerLogic(Starter client) {
 		this.client = client;
 	}
 
@@ -65,6 +57,13 @@ public class RandomLogic implements IGameHandler {
 	@Override
 	public void onRequestAction() {
 		System.out.println("*** Es wurde ein Zug angefordert");
+                
+                
+                /*
+                THIS IS FOR THE FIRST FOUR MOVES OF THE GAME
+                Here, we choose where to deploy our penguins based the number of
+                fish on the surrounding fields.
+                */
 		if (gameState.getCurrentMoveType() == MoveType.SET) {
 			List<SetMove> possibleMoves = gameState.getPossibleSetMoves();
                         int maxSurroundingFishCount = 0;
@@ -72,15 +71,16 @@ public class RandomLogic implements IGameHandler {
                         //initialize selection so the compiler doesn't complain
                         SetMove selection = possibleMoves.get(0);
                         
-                    for (SetMove possibleMove : possibleMoves) {
+                    for (SetMove possibleMove : possibleMoves) { //iterate through all the fields we could put our penguin on
 
                         int[] coordinates = possibleMove.getSetCoordinates();
-
-                            //only take fields that are not on the edge of the board
-                        //now count the fish surrounding the field
+                        
+                        //get an ArrayList with the coords of the surrounding fields
                         ArrayList<int[]> surroundingCoords = CoordCalc.getSurroundingCoordinates(coordinates);
                         int surroundingFishCount = 0;
                         boolean friendlyPenguinOnField = false;
+                        
+                        //Get the number of fish on the surrounding fields, and check if there are friendly penguins on them
                         for (int i = 0; i < surroundingCoords.size(); i++) {
                             Field surroundingField = gameState.getBoard().getField(surroundingCoords.get(i)[0], surroundingCoords.get(i)[1]);
                             if (surroundingField.hasPenguin() && surroundingField.getPenguin().getOwner() == currentPlayer.getPlayerColor()) {
@@ -90,7 +90,9 @@ public class RandomLogic implements IGameHandler {
                         }
 
                         /*if this is the highest number of fish surrounding a field as of now,
-                         update the max fish count and the selected move*/
+                         update the max fish count and the selected move (unless a friendly
+                         penguin is on one of the fields. We don't want to place two penguins
+                         immediately adjacent to each other.)*/
                         if (surroundingFishCount > maxSurroundingFishCount && !friendlyPenguinOnField) {
                             maxSurroundingFishCount = surroundingFishCount;
                             selection = possibleMove;
@@ -104,7 +106,13 @@ public class RandomLogic implements IGameHandler {
                             + selection.getSetCoordinates()[0] + ", y="
                             + selection.getSetCoordinates()[1]);
                     sendAction(selection);
-		} else {
+                    
+                } 
+                
+                /*
+                THIS IS FOR THE REGULAR GAME MOVES (MOVES 5-30)
+                */
+                else {
 			MoveRanking ranking = new MoveRanking(gameState);
                         Move selection = ranking.getBestMove();
                         
