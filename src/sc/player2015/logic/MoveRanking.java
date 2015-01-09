@@ -33,7 +33,7 @@ public class MoveRanking {
      * Number of credits added for the average number of fish on the adjacent fields.
      * e.g. 2.3 fish on average and SURROUNDING_FISH_MULTIPLIER = 100 -> 230 credits
      */
-    private final int SURROUNDING_FISH_MULTIPLIER = 100;
+    private final int SURROUNDING_FISH_MULTIPLIER = 0;
     
     //negative factors
     /**
@@ -41,12 +41,12 @@ public class MoveRanking {
      * and destination fields.
      * e.g. distance = 4, multiplier = 50 -> -200 credits
      */
-    private final int DISTANCE_NORMAL_MULTIPLIER = 50;
+    private final int DISTANCE_NORMAL_MULTIPLIER = 0;
     
     /**
      * Same as above, but for the last rounds of the game.
      */
-    private final int DISTANCE_END_MULTIPLIER = 20;
+    private final int DISTANCE_END_MULTIPLIER = 0;
     
     /**
      * Until which round we should use the normal distance multiplier.
