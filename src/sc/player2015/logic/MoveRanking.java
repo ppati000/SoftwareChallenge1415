@@ -66,7 +66,7 @@ public class MoveRanking {
 
     private void rankMoves() {
         for (int i = 0; i < possibleMoves.size(); i++) {
-            if (possibleMoves.get(i).getClass() == NullMove.class) {
+            if (possibleMoves.get(i).getClass() == RunMove.class) {
                 RunMove possibleMove = (RunMove) possibleMoves.get(i);
                 int[] coordinatesOfMove = possibleMove.getRunCoordinates();
                 rankings[i] = FISH_MULTIPLIER * gameState.getBoard().getFishNumber(coordinatesOfMove[2], coordinatesOfMove[3]);
@@ -84,8 +84,8 @@ public class MoveRanking {
                     rankings [i] = (int) (rankings[i] - DISTANCE_END_MULTIPLIER * CoordCalc.distance(possibleMove.getRunCoordinates()));
                 }
             }
-            else {
-                rankings[i] = 0;
+            else { //if the Move is a NullMove, give it a very low rating
+                rankings[i] = -420420;
             }
         }
     }
