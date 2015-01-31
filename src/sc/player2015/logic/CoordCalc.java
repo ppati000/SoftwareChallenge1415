@@ -40,11 +40,13 @@ public class CoordCalc {
     }
 
     /**
+     * Deprecated! Only used for choosing SetMoves because I'm too lazy to refactor it.
      * Returns the coordinates of all surrounding fields to a specific field.
      * @param fieldCoords the coordinates of the field, with fieldCoords[0]
      * being the x- and fieldCoords[1] being the y-coordinate
      * @return an ArrayList of arrays containing the surrounding field's coordinates, with
      * [0] being the x-, and [1] being the y-coordinate of a field
+     * @deprecated
      */
     public static ArrayList getSurroundingCoordinates(int[] fieldCoords) {
         ArrayList<int[]> surroundingCoords = new ArrayList<>();
