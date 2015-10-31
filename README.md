@@ -6,3 +6,5 @@ All custom logic code is in
 
 /src/sc/player2015/logic/
 ```
+
+Created by Patrick Petrovic
